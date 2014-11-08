@@ -1,0 +1,525 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Oika.Libs.MeLogg</name>
+    </assembly>
+    <members>
+        <member name="T:Oika.Libs.MeLogg.DefaultLogBuilder">
+            <summary>
+            <see cref="T:Oika.Libs.MeLogg.ILogBuilder"/>の既定の実装クラスです。
+            このクラスでは、以下のような書式で文字列を生成します。
+              □t:2000/01/01 00:00:00.000    lv:Info    th:10    pt:FooPart    msg:Hello, logger!
+            </summary>
+        </member>
+        <member name="T:Oika.Libs.MeLogg.ILogBuilder">
+            <summary>
+            ログ出力される文字列を生成するメソッドを定義するインタフェースです。
+            </summary>
+        </member>
+        <member name="M:Oika.Libs.MeLogg.ILogBuilder.BuildLog(System.DateTime,System.String,System.String,System.Int32,System.String)">
+            <summary>
+            ログテキストを生成します。
+            </summary>
+            <param name="time"></param>
+            <param name="part"></param>
+            <param name="level"></param>
+            <param name="threadId"></param>
+            <param name="body"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Oika.Libs.MeLogg.DefaultLogBuilder.#ctor">
+            <summary>
+            デフォルトコンストラクタです。
+            </summary>
+        </member>
+        <member name="M:Oika.Libs.MeLogg.DefaultLogBuilder.BuildLog(System.DateTime,System.String,System.String,System.Int32,System.String)">
+            <summary>
+            ログテキストを生成します。
+            </summary>
+            <param name="time">ロギング日時を指定します。</param>
+            <param name="part">出力内容を分類する機能名称を指定します。</param>
+            <param name="level">ログ出力レベルを指定します。</param>
+            <param name="threadId">スレッドIDを指定します。</param>
+            <param name="body">ログ出力本文を指定します。</param>
+            <returns>生成されたテキストを返します。</returns>
+        </member>
+        <member name="T:Oika.Libs.MeLogg.ErrorLogger">
+            <summary>
+            ログ出力時のエラー情報を別ファイルに書きだすためのクラスです。
+            </summary>
+        </member>
+        <member name="M:Oika.Libs.MeLogg.ErrorLogger.#ctor(Oika.Libs.MeLogg.LogSetting)">
+            <summary>
+            コンストラクタです。
+            </summary>
+            <param name="setting"></param>
+        </member>
+        <member name="M:Oika.Libs.MeLogg.ErrorLogger.Queue(System.DateTime,System.String,System.Object[])">
+            <summary>
+            エラー情報を非同期的に書き出します。
+            </summary>
+            <param name="loggingTime"></param>
+            <param name="message"></param>
+            <param name="args"></param>
+        </member>
+        <member name="T:Oika.Libs.MeLogg.FileRotator">
+            <summary>
+            ファイルのロテート処理を行うクラスです。
+            </summary>
+        </member>
+        <member name="M:Oika.Libs.MeLogg.FileRotator.#ctor(System.String,System.String,System.Int32)">
+            <summary>
+            コンストラクタです。
+            </summary>
+            <param name="directory">対象のディレクトリパスを指定します。</param>
+            <param name="prefix">ファイル名のプレフィクス（序数の前までの部分）を指定します。</param>
+            <param name="maxFileCount">ファイルの保存最大件数を指定します。</param>
+        </member>
+        <member name="M:Oika.Libs.MeLogg.FileRotator.Rotate">
+            <summary>
+            ファイル名の序数を1つずつ繰り上げます。
+            </summary>
+        </member>
+        <member name="T:Oika.Libs.MeLogg.ILogger">
+            <summary>
+            ログ出力メソッドを定義するインタフェースです。
+            </summary>
+        </member>
+        <member name="M:Oika.Libs.MeLogg.ILogger.Debug(System.String,System.Object[])">
+            <summary>
+            デバッグログを出力します。
+            出力レベルは最下位になります。
+            </summary>
+            <param name="message"></param>
+            <param name="args"></param>
+        </member>
+        <member name="M:Oika.Libs.MeLogg.ILogger.Detail(System.String,System.Object[])">
+            <summary>
+            詳細ログを出力します。
+            出力レベルはDebugより高く、Infoより低く扱われます。
+            </summary>
+            <param name="message"></param>
+            <param name="args"></param>
+        </member>
+        <member name="M:Oika.Libs.MeLogg.ILogger.Info(System.String,System.Object[])">
+            <summary>
+            情報ログを出力します。
+            出力レベルはDetailより高く、Warnより低く扱われます。
+            </summary>
+            <param name="message"></param>
+            <param name="args"></param>
+        </member>
+        <member name="M:Oika.Libs.MeLogg.ILogger.Warn(System.String,System.Object[])">
+            <summary>
+            警告ログを出力します。
+            出力レベルはInfoより高く、Fatalより低く扱われます。
+            </summary>
+            <param name="message"></param>
+            <param name="args"></param>
+        </member>
+        <member name="M:Oika.Libs.MeLogg.ILogger.Fatal(System.String,System.Object[])">
+            <summary>
+            異常ログを出力します。
+            出力レベルは最上位になります。
+            </summary>
+            <param name="message"></param>
+            <param name="args"></param>
+        </member>
+        <member name="P:Oika.Libs.MeLogg.ILogger.LogsDebug">
+            <summary>
+            現在の設定で、Debugログが出力されるかどうかを取得します。
+            </summary>
+        </member>
+        <member name="P:Oika.Libs.MeLogg.ILogger.LogsDetail">
+            <summary>
+            現在の設定で、Detailログが出力されるかどうかを取得します。
+            </summary>
+        </member>
+        <member name="P:Oika.Libs.MeLogg.ILogger.LogsInfo">
+            <summary>
+            現在の設定で、Infoログが出力されるかどうかを取得します。
+            </summary>
+        </member>
+        <member name="P:Oika.Libs.MeLogg.ILogger.LogsWarn">
+            <summary>
+            現在の設定で、Warnログが出力されるかどうかを取得します。
+            </summary>
+        </member>
+        <member name="P:Oika.Libs.MeLogg.ILogger.LogsFatal">
+            <summary>
+            現在の設定で、Fatalログが出力されるかどうかを取得します。
+            </summary>
+        </member>
+        <member name="T:Oika.Libs.MeLogg.LockerContainer">
+            <summary>
+            排他ロックオブジェクトをログ名称と対応づけて保持するコンテナクラスです。
+            </summary>
+        </member>
+        <member name="M:Oika.Libs.MeLogg.LockerContainer.Get(System.String)">
+            <summary>
+            指定した名前のログ用の排他ロックオブジェクトを取得します。
+            </summary>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Oika.Libs.MeLogg.LogBuiderContainer">
+            <summary>
+            ログ出力時に使用される<see cref="T:Oika.Libs.MeLogg.ILogBuilder"/>を保持する静的クラスです。
+            ログ出力本文の書式を独自に決めたい場合は、このクラスの<see cref="P:Oika.Libs.MeLogg.LogBuiderContainer.Builder"/>プロパティを
+            独自に実装したクラスのオブジェクトで置き換えます。
+            </summary>
+        </member>
+        <member name="M:Oika.Libs.MeLogg.LogBuiderContainer.#cctor">
+            <summary>
+            静的コンストラクタ
+            </summary>
+        </member>
+        <member name="P:Oika.Libs.MeLogg.LogBuiderContainer.Builder">
+            <summary>
+            ログ出力時に使用されるテキスト生成オブジェクトを取得または設定します。
+            既定では<see cref="T:Oika.Libs.MeLogg.DefaultLogBuilder"/>が使用されます。
+            </summary>
+        </member>
+        <member name="T:Oika.Libs.MeLogg.Logger">
+            <summary>
+            ロテート管理されるテキストファイルへのログ出力機能を持つ
+            <see cref="T:Oika.Libs.MeLogg.ILogger"/>の標準実装クラスです。
+            </summary>
+        </member>
+        <member name="M:Oika.Libs.MeLogg.Logger.#ctor(System.String,System.String)">
+            <summary>
+            コンストラクタです。
+            </summary>
+            <param name="name">ログファイル種別管理名称を指定します。</param>
+            <param name="part">ログファイル内で出力内容を分類するための機能名称を指定します。</param>
+        </member>
+        <member name="M:Oika.Libs.MeLogg.Logger.Debug(System.String,System.Object[])">
+            <summary>
+            デバッグログを出力します。
+            出力レベルは最下位になります。
+            </summary>
+            <param name="message"></param>
+            <param name="args"></param>
+        </member>
+        <member name="M:Oika.Libs.MeLogg.Logger.Detail(System.String,System.Object[])">
+            <summary>
+            詳細ログを出力します。
+            出力レベルはDebugより高く、Infoより低く扱われます。
+            </summary>
+            <param name="message"></param>
+            <param name="args"></param>
+        </member>
+        <member name="M:Oika.Libs.MeLogg.Logger.Info(System.String,System.Object[])">
+            <summary>
+            情報ログを出力します。
+            出力レベルはDetailより高く、Warnより低く扱われます。
+            </summary>
+            <param name="message"></param>
+            <param name="args"></param>
+        </member>
+        <member name="M:Oika.Libs.MeLogg.Logger.Warn(System.String,System.Object[])">
+            <summary>
+            警告ログを出力します。
+            出力レベルはInfoより高く、Fatalより低く扱われます。
+            </summary>
+            <param name="message"></param>
+            <param name="args"></param>
+        </member>
+        <member name="M:Oika.Libs.MeLogg.Logger.Fatal(System.String,System.Object[])">
+            <summary>
+            異常ログを出力します。
+            出力レベルは最上位になります。
+            </summary>
+            <param name="message"></param>
+            <param name="args"></param>
+        </member>
+        <member name="P:Oika.Libs.MeLogg.Logger.Name">
+            <summary>
+            ログファイル種別管理名称を取得します。
+            </summary>
+        </member>
+        <member name="P:Oika.Libs.MeLogg.Logger.Part">
+            <summary>
+            ログファイル内で出力内容を分類するための機能名称を取得または設定します。
+            </summary>
+        </member>
+        <member name="P:Oika.Libs.MeLogg.Logger.LogsDebug">
+            <summary>
+            現在の設定で、Debugログが出力されるかどうかを取得します。
+            </summary>
+        </member>
+        <member name="P:Oika.Libs.MeLogg.Logger.LogsDetail">
+            <summary>
+            現在の設定で、Detailログが出力されるかどうかを取得します。
+            </summary>
+        </member>
+        <member name="P:Oika.Libs.MeLogg.Logger.LogsInfo">
+            <summary>
+            現在の設定で、Infoログが出力されるかどうかを取得します。
+            </summary>
+        </member>
+        <member name="P:Oika.Libs.MeLogg.Logger.LogsWarn">
+            <summary>
+            現在の設定で、Warnログが出力されるかどうかを取得します。
+            </summary>
+        </member>
+        <member name="P:Oika.Libs.MeLogg.Logger.LogsFatal">
+            <summary>
+            現在の設定で、Fatalログが出力されるかどうかを取得します。
+            </summary>
+        </member>
+        <member name="T:Oika.Libs.MeLogg.LogSetting">
+            <summary>
+            ログ出力設定を格納するクラスです。
+            このクラスのインスタンスは<see cref="T:Oika.Libs.MeLogg.LogSetting.Builder"/>を使用して
+            生成することができます。
+            </summary>
+        </member>
+        <member name="M:Oika.Libs.MeLogg.LogSetting.#ctor">
+            <summary>
+            プライベートコンストラクタ
+            </summary>
+        </member>
+        <member name="M:Oika.Libs.MeLogg.LogSetting.Logs(Oika.Libs.MeLogg.LogLevel)">
+            <summary>
+            指定したレベルのログが、このオブジェクトに設定された出力レベルで
+            出力されるかどうかを取得します。
+            </summary>
+            <param name="targetLevel"></param>
+            <returns></returns>
+        </member>
+        <member name="P:Oika.Libs.MeLogg.LogSetting.LogName">
+            <summary>
+            ログファイル種別管理名称を取得します。
+            </summary>
+        </member>
+        <member name="P:Oika.Libs.MeLogg.LogSetting.Directory">
+            <summary>
+            出力ディレクトリパスを取得します。
+            </summary>
+        </member>
+        <member name="P:Oika.Libs.MeLogg.LogSetting.MaxFileSize_byte">
+            <summary>
+            1ファイルの最大出力サイズ（byte）を取得します。
+            ファイルサイズによるロテートを行わない場合は負の値を指定します。
+            既定値は-1です。
+            </summary>
+        </member>
+        <member name="P:Oika.Libs.MeLogg.LogSetting.RotatesFileByDay">
+            <summary>
+            日付変更時に出力ファイルを切り替えるかどうかを取得します。
+            既定値はTrueです。
+            </summary>
+        </member>
+        <member name="P:Oika.Libs.MeLogg.LogSetting.MaxFileCount">
+            <summary>
+            保持される最大ファイル件数を取得します。
+            ファイル数による過去ファイル削除を行わない場合は負の値を指定します。
+            既定値は10です。
+            </summary>
+        </member>
+        <member name="P:Oika.Libs.MeLogg.LogSetting.Encoding">
+            <summary>
+            ログ出力に使用される文字コードを取得します。
+            既定値はシフトJISです。
+            </summary>
+        </member>
+        <member name="P:Oika.Libs.MeLogg.LogSetting.Level">
+            <summary>
+            ログ出力レベルを表す文字列を取得します。
+            </summary>
+        </member>
+        <member name="P:Oika.Libs.MeLogg.LogSetting.LogsDebug">
+            <summary>
+            このオブジェクトに設定された出力レベルで
+            Debugログが出力されるかどうかを取得します。
+            </summary>
+        </member>
+        <member name="P:Oika.Libs.MeLogg.LogSetting.LogsDetail">
+            <summary>
+            このオブジェクトに設定された出力レベルで
+            Detailログが出力されるかどうかを取得します。
+            </summary>
+        </member>
+        <member name="P:Oika.Libs.MeLogg.LogSetting.LogsInfo">
+            <summary>
+            このオブジェクトに設定された出力レベルで
+            Infoログが出力されるかどうかを取得します。
+            </summary>
+        </member>
+        <member name="P:Oika.Libs.MeLogg.LogSetting.LogsWarn">
+            <summary>
+            このオブジェクトに設定された出力レベルで
+            Warnログが出力されるかどうかを取得します。
+            </summary>
+        </member>
+        <member name="P:Oika.Libs.MeLogg.LogSetting.LogsFatal">
+            <summary>
+            このオブジェクトに設定された出力レベルで
+            Fatalログが出力されるかどうかを取得します。
+            </summary>
+        </member>
+        <member name="T:Oika.Libs.MeLogg.LogSetting.Builder">
+            <summary>
+            <see cref="T:Oika.Libs.MeLogg.LogSetting"/>クラスのインスタンスを生成するための
+            ビルダクラスです。
+            </summary>
+        </member>
+        <member name="M:Oika.Libs.MeLogg.LogSetting.Builder.#ctor(System.String,System.String)">
+            <summary>
+            ビルダインスタンスを生成します。
+            </summary>
+            <param name="logName"></param>
+            <param name="directory"></param>
+            <exception cref="T:System.ArgumentNullException"></exception>
+        </member>
+        <member name="M:Oika.Libs.MeLogg.LogSetting.Builder.Build">
+            <summary>
+            インスタンスを生成します。
+            </summary>
+            <returns></returns>
+            <exception cref="T:System.InvalidOperationException"></exception>
+        </member>
+        <member name="P:Oika.Libs.MeLogg.LogSetting.Builder.LogName">
+            <summary>
+            ログファイル種別管理名称を取得します。
+            </summary>
+        </member>
+        <member name="P:Oika.Libs.MeLogg.LogSetting.Builder.Directory">
+            <summary>
+            出力ディレクトリパスを取得します。
+            </summary>
+        </member>
+        <member name="P:Oika.Libs.MeLogg.LogSetting.Builder.Level">
+            <summary>
+            出力レベルを取得または設定します。
+            既定値は"Debug"です。
+            </summary>
+        </member>
+        <member name="P:Oika.Libs.MeLogg.LogSetting.Builder.MaxFileSize_byte">
+            <summary>
+            1ファイルの最大出力サイズ（byte）を取得または設定します。
+            ファイルサイズによるロテートを行わない場合は負の値を指定します。
+            既定値は-1です。
+            </summary>
+        </member>
+        <member name="P:Oika.Libs.MeLogg.LogSetting.Builder.RotatesFileByDay">
+            <summary>
+            日付変更時に出力ファイルを切り替えるかどうかを取得または設定します。
+            既定値はTrueです。
+            </summary>
+        </member>
+        <member name="P:Oika.Libs.MeLogg.LogSetting.Builder.MaxFileCount">
+            <summary>
+            保持される最大ファイル件数を取得または設定します。
+            ファイル数による過去ファイル削除を行わない場合は負の値を指定します。
+            既定値は10です。
+            </summary>
+        </member>
+        <member name="P:Oika.Libs.MeLogg.LogSetting.Builder.Encoding">
+            <summary>
+            ログ出力に使用される文字コードを取得または設定します。
+            既定値はシフトJISです。
+            </summary>
+        </member>
+        <member name="T:Oika.Libs.MeLogg.LogSettings">
+            <summary>
+            <see cref="T:Oika.Libs.MeLogg.Logger"/>によるログ出力に使用される
+            ログ出力設定を管理する静的クラスです。
+            </summary>
+        </member>
+        <member name="M:Oika.Libs.MeLogg.LogSettings.Remove(System.String)">
+            <summary>
+            指定した名前のログ出力設定を管理から削除します。
+            </summary>
+            <param name="logName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Oika.Libs.MeLogg.LogSettings.Update(Oika.Libs.MeLogg.LogSetting)">
+            <summary>
+            ログ出力設定を管理に追加します。
+            管理名称の同じ出力設定が登録されている場合は上書きされます。
+            </summary>
+            <param name="setting"></param>
+        </member>
+        <member name="M:Oika.Libs.MeLogg.LogSettings.GetSetting(System.String)">
+            <summary>
+            指定した名前のログ出力設定を取得します。
+            指定した名前の設定がない場合はNullを返します。
+            </summary>
+            <param name="logName"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Oika.Libs.MeLogg.PathUtil">
+            <summary>
+            Path文字列を利用するための汎用メソッドを定義する静的クラスです。
+            </summary>
+        </member>
+        <member name="M:Oika.Libs.MeLogg.PathUtil.GetFullDirectoryPath(System.String,System.String,System.Nullable{System.Boolean})">
+            <summary>
+            指定したディレクトリの絶対パスを取得します。
+            </summary>
+            <param name="rootDir">absOrRelPathが相対パスの場合に、ルートディレクトリとして
+            連結される文字列を指定します。</param>
+            <param name="absOrRelPath">絶対パス、または相対パスを指定します。
+            絶対パスが指定された場合には、rootDirとの連結を行いません。</param>
+            <param name="appendsLastSeparator">パスの最後をディレクトリの区切り文字にするかどうかを指定します。
+            Trueを指定した場合、パスの最後をディレクトリ区切り文字にして返します。
+            Nullを指定した場合は何もしません。</param>
+            <returns>ディレクトリの絶対パス。</returns>
+        </member>
+        <member name="M:Oika.Libs.MeLogg.PathUtil.IsFullPath(System.String)">
+            <summary>
+            指定したパスが絶対パスかどうかを取得します。
+            <see cref="M:System.IO.Path.IsPathRooted(System.String)"/>と違い、
+            先頭が区切り文字の場合はFalseを返します。
+            </summary>
+            <param name="path">検査対象のパス。</param>
+            <returns>絶対パスの場合はTrueを返します。</returns>
+        </member>
+        <member name="M:Oika.Libs.MeLogg.PathUtil.Combine(System.String,System.String)">
+            <summary>
+            2つの文字列を1つのパスに結合します。
+            <see cref="M:System.IO.Path.Combine(System.String,System.String)"/>との違いは以下のとおりです。
+            ・1番目のパスの末尾がドライブレータ':'の場合、その直後に区切り文字を付与します。
+            ・2番目のパスの先頭が区切り文字の場合でも、1番目のパスと結合します。
+            ・2番目のパスの先頭がUriの階層を表す相対パス（"..\"等）の場合、
+            1番目のパスを基準として指定された階層と結合します。
+            </summary>
+            <param name="path1">結合する1番目のパス。</param>
+            <param name="path2">結合する2番目のパス。</param>
+            <returns>結合された文字列。</returns>
+            <exception cref="T:System.ArgumentNullException"></exception>
+        </member>
+        <member name="T:Oika.Libs.MeLogg.Writer">
+            <summary>
+            ログをテキストファイルに書きだす実処理を担当するクラスです。
+            </summary>
+        </member>
+        <member name="M:Oika.Libs.MeLogg.Writer.#ctor(Oika.Libs.MeLogg.LogSetting)">
+            <summary>
+            コンストラクタです。
+            </summary>
+            <param name="setting"></param>
+        </member>
+        <member name="M:Oika.Libs.MeLogg.Writer.Write(System.DateTime,System.String)">
+            <summary>
+            指定した文字列をファイルに書きだします。
+            </summary>
+            <param name="loggingTime"></param>
+            <param name="text"></param>
+            <returns></returns>
+            <exception cref="T:System.IO.IOException"></exception>
+        </member>
+        <member name="T:Oika.Libs.MeLogg.LogWriteResult">
+            <summary>
+            ログのファイル書き出し処理結果を表す列挙型です。
+            </summary>
+        </member>
+        <member name="T:Oika.Libs.MeLogg.XElementExt">
+            <summary>
+            XElementの拡張メソッドを定義するクラス
+            </summary>
+        </member>
+    </members>
+</doc>
