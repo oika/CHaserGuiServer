@@ -4,6 +4,7 @@ using Oika.Apps.CHaserGuiServer.ViewModels;
 using Oika.Libs.MeLogg;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -174,16 +175,23 @@ namespace Oika.Apps.CHaserGuiServer
             {
                 CurrentTurn++;
 
-                var gameset = false;
-                var res = playTurn(true, ref gameset);
-                if (!res) return;
+                GameResultKind result;
 
-                res = playTurn(false, ref gameset);
+                var res = playTurn(true, out result);
                 if (!res) return;
-
-                if (gameset)
+                if (result != GameResultKind.Continue)
                 {
-                    logger.Info("ゲーム終了");
+                    logger.Info("ゲーム終了：" + result.ToName());
+                    notifyGameEnd(false);
+                    return;
+                }
+
+                res = playTurn(false, out result);
+                if (!res) return;
+                if (result != GameResultKind.Continue)
+                {
+                    logger.Info("ゲーム終了：" + result.ToName());
+                    notifyGameEnd(true);
                     return;
                 }
 
@@ -191,18 +199,22 @@ namespace Oika.Apps.CHaserGuiServer
             }
 
             logger.Info("ゲーム終了：ターンアップ");
+            notifyGameEnd(true);
+            notifyGameEnd(false);
         }
 
-        private bool playTurn(bool isCool, ref bool isGameSet)
+        private void notifyGameEnd(bool isCool)
         {
-            if (!isGameSet) isGameSet = mapContext.IsGameSet();
+            var around = mapContext.GetAroundInfo(isCool);
+            line.RequestCall(isCool, new ResponseData(true, around));
+        }
+
+        private bool playTurn(bool isCool, out GameResultKind result)
+        {
+            result = mapContext.GetResult();
+            Debug.Assert(result == GameResultKind.Continue);    //この時点では終了していないこと
 
             var preInfo = mapContext.GetAroundInfo(isCool);
-            if (isGameSet)
-            {
-                line.RequestCall(isCool, new ResponseData(true, preInfo));
-                return true;
-            }
 
             var callInfo = line.RequestCall(isCool, new ResponseData(false, preInfo));
             if (callInfo.Method == MethodKind.Unknown)
@@ -212,9 +224,10 @@ namespace Oika.Apps.CHaserGuiServer
             }
 
             var res = mapContext.InvokeCall(isCool, callInfo.Method, callInfo.Direction);
-            isGameSet = mapContext.IsGameSet();
+            result = mapContext.GetResult();
 
-            if (!line.NotifyResult(isCool, new ResponseData(isGameSet, res)))
+            var gameSet = result != GameResultKind.Continue;
+            if (!line.NotifyResult(isCool, new ResponseData(gameSet, res)))
             {
                 logger.Warn("異常終了：" + (isCool ? "Cool" : "Hot"));
                 return false;

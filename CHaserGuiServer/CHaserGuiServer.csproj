@@ -59,6 +59,7 @@
     </ApplicationDefinition>
     <Compile Include="Converters\BoolInversionConverter.cs" />
     <Compile Include="FloorContext.cs" />
+    <Compile Include="GameResultKind.cs" />
     <Compile Include="GameState.cs" />
     <Compile Include="MapPoint.cs" />
     <Compile Include="Line\ConnectionChangedEventArgs.cs" />

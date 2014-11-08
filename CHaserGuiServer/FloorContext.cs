@@ -57,16 +57,29 @@ namespace Oika.Apps.CHaserGuiServer
 
         #region 終了判定
 
-        public bool IsGameSet()
+        public GameResultKind GetResult()
         {
+            var coolLoses = false;
+            var hotLoses = false;
+
             foreach (var isCool in new[] { true, false })
             {
                 var pt = isCool ? coolPoint : hotPoint;
 
+                //エリア外・またはブロックにつぶされたとき
                 CellKind cl;
-                if (!cellDic.TryGetValue(pt, out cl)) return true;  //エリア外にいるとき
-
-                if (cl == CellKind.Block) return true;  //ブロックにつぶされたとき
+                if (!cellDic.TryGetValue(pt, out cl) || cl == CellKind.Block)
+                {
+                    if (isCool)
+                    {
+                        coolLoses = true;
+                    }
+                    else
+                    {
+                        hotLoses = true;
+                    }
+                    continue;
+                }
 
                 var myKind = isCool ? CellKind.Cool : CellKind.Hot;
                 Debug.Assert(cl == myKind || cl == CellKind.CoolAndHot);
@@ -75,10 +88,21 @@ namespace Oika.Apps.CHaserGuiServer
                 var square = new[] { pt.ToUp(), pt.ToLeft(), pt.ToRight(), pt.ToDown() };
                 if (square.All(p => !cellDic.TryGetValue(p, out cl) || cl == CellKind.Block))
                 {
-                    return true;
+                    if (isCool)
+                    {
+                        coolLoses = true;
+                    }
+                    else
+                    {
+                        hotLoses = true;
+                    }
                 }
             }
-            return false;
+
+            return (coolLoses && hotLoses) ? GameResultKind.Draw
+                : coolLoses ? GameResultKind.HotWon
+                : hotLoses ? GameResultKind.CoolWon
+                : GameResultKind.Continue;
         }
 
         #endregion

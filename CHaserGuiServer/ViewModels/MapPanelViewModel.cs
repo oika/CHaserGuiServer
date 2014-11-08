@@ -58,9 +58,9 @@ namespace Oika.Apps.CHaserGuiServer.ViewModels
         }
 
 
-        public bool  IsGameSet()
+        public GameResultKind GetResult()
         {
-            return this.Cells.IsGameSet();
+            return Cells.GetResult();
         }
 
         #endregion
