@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Threading;
 
@@ -24,6 +25,9 @@ namespace Oika.Apps.CHaserGuiServer
         LineManager line;
         bool isCoolConnected;
         bool isHotConnected;
+
+        readonly GameSoundPlayer coolSoundPlayer;
+        readonly GameSoundPlayer hotSoundPlayer;
 
         #region 公開プロパティ
 
@@ -122,6 +126,34 @@ namespace Oika.Apps.CHaserGuiServer
             this.mapContext = mapContext;
             this.turnCount = turnCount;
             this.logger = logger;
+
+            //サウンド種別決定（とりあえずランダムに決めることにする）
+            var clients = GameSoundPlayer.EnumerateClientNames().ToArray();
+            if (clients.Length == 0)
+            {
+                coolSoundPlayer = new GameSoundPlayer("");
+                hotSoundPlayer = new GameSoundPlayer("");
+            }
+            else if (clients.Length == 1)
+            {
+                coolSoundPlayer = new GameSoundPlayer(clients[0]);
+                hotSoundPlayer = new GameSoundPlayer(clients[0]);
+            }
+            else
+            {
+                var rand = new Random();
+
+                var idxCool = rand.Next(clients.Length);
+                int idxHot;
+                while (true)
+                {
+                    idxHot = rand.Next(clients.Length);
+                    if (idxCool != idxHot) break;
+                }
+
+                coolSoundPlayer = new GameSoundPlayer(clients[idxCool]);
+                hotSoundPlayer = new GameSoundPlayer(clients[idxHot]);
+            }
         }
 
         public void Start()
@@ -162,6 +194,9 @@ namespace Oika.Apps.CHaserGuiServer
                     Task.Factory.StartNew(() =>
                     {
                         logger.Info("ゲーム開始");
+
+                        coolSoundPlayer.PlayGameStart();
+
                         beginTurns();
                     });
                 }
@@ -183,6 +218,7 @@ namespace Oika.Apps.CHaserGuiServer
                 {
                     logger.Info("ゲーム終了：" + result.ToName());
                     notifyGameEnd(false);
+                    playGameSetSound(result);
                     return;
                 }
 
@@ -192,6 +228,7 @@ namespace Oika.Apps.CHaserGuiServer
                 {
                     logger.Info("ゲーム終了：" + result.ToName());
                     notifyGameEnd(true);
+                    playGameSetSound(result);
                     return;
                 }
 
@@ -201,6 +238,34 @@ namespace Oika.Apps.CHaserGuiServer
             logger.Info("ゲーム終了：ターンアップ");
             notifyGameEnd(true);
             notifyGameEnd(false);
+            playGameSetSound(GameResultKind.Draw);
+        }
+
+
+
+        private void playGameSetSound(GameResultKind result)
+        {
+            Thread.Sleep(100);
+
+            if (result == GameResultKind.CoolWon)
+            {
+                hotSoundPlayer.PlayLose();
+            }
+            else if (result == GameResultKind.HotWon)
+            {
+                coolSoundPlayer.PlayLose();
+            }
+
+            coolSoundPlayer.PlayGameSet();
+
+            if (result == GameResultKind.CoolWon)
+            {
+                coolSoundPlayer.PlayWin();
+            }
+            else if (result == GameResultKind.HotWon)
+            {
+                hotSoundPlayer.PlayWin();
+            }
         }
 
         private void notifyGameEnd(bool isCool)
@@ -222,6 +287,10 @@ namespace Oika.Apps.CHaserGuiServer
                 logger.Warn("異常終了：" + (isCool ? "Cool" : "Hot"));
                 return false;
             }
+
+            //音
+            var soundPlayer = isCool ? coolSoundPlayer : hotSoundPlayer;
+            soundPlayer.Play(callInfo.Method);
 
             var res = mapContext.InvokeCall(isCool, callInfo.Method, callInfo.Direction);
             result = mapContext.GetResult();

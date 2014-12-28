@@ -73,6 +73,7 @@
     <Compile Include="MVVM\ViewModelBase.cs" />
     <Compile Include="MVVM\WeakAction.cs" />
     <Compile Include="MVVM\WeakEventHandler.cs" />
+    <Compile Include="GameSoundPlayer.cs" />
     <Compile Include="ViewModels\MapPanelViewModel.cs" />
     <Compile Include="Views\MapPanel.xaml.cs">
       <DependentUpon>MapPanel.xaml</DependentUpon>
