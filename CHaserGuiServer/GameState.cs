@@ -271,7 +271,7 @@ namespace Oika.Apps.CHaserGuiServer
         private void notifyGameEnd(bool isCool)
         {
             var around = mapContext.GetAroundInfo(isCool);
-            line.RequestCall(isCool, new ResponseData(true, around));
+            line.RequestCall(isCool, new ResponseData(true, around, isCool));
         }
 
         private bool playTurn(bool isCool, out GameResultKind result)
@@ -281,7 +281,7 @@ namespace Oika.Apps.CHaserGuiServer
 
             var preInfo = mapContext.GetAroundInfo(isCool);
 
-            var callInfo = line.RequestCall(isCool, new ResponseData(false, preInfo));
+            var callInfo = line.RequestCall(isCool, new ResponseData(false, preInfo, isCool));
             if (callInfo.Method == MethodKind.Unknown)
             {
                 logger.Warn("異常終了：" + (isCool ? "Cool" : "Hot"));
@@ -296,7 +296,7 @@ namespace Oika.Apps.CHaserGuiServer
             result = mapContext.GetResult();
 
             var gameSet = result != GameResultKind.Continue;
-            if (!line.NotifyResult(isCool, new ResponseData(gameSet, res)))
+            if (!line.NotifyResult(isCool, new ResponseData(gameSet, res, isCool)))
             {
                 logger.Warn("異常終了：" + (isCool ? "Cool" : "Hot"));
                 return false;

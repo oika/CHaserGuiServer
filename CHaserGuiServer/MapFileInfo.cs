@@ -155,9 +155,9 @@ namespace Oika.Apps.CHaserGuiServer
 
         private static CellKind parseCellKind(char c)
         {
-            return c == CellKind.Nothing.ToSendChar() ? CellKind.Nothing
-                : c == CellKind.Block.ToSendChar() ? CellKind.Block
-                : c == CellKind.Item.ToSendChar() ? CellKind.Item
+            return c == CellKind.Nothing.ToSendChar(null) ? CellKind.Nothing
+                : c == CellKind.Block.ToSendChar(null) ? CellKind.Block
+                : c == CellKind.Item.ToSendChar(null) ? CellKind.Item
                 : CellKind.Unknown;
         }
     }

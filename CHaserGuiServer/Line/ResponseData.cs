@@ -14,12 +14,15 @@ namespace Oika.Apps.CHaserGuiServer.Line
 
         public const int TotalLength = 10;
 
-        public ResponseData(bool isGameSet, IList<CellKind> cells)
+        private readonly bool isCool;
+
+        public ResponseData(bool isGameSet, IList<CellKind> cells, bool isCool)
         {
             if (cells.Count + 1 != TotalLength) throw new ArgumentException();
 
             this.IsGameSet = isGameSet;
             this.Cells = new ReadOnlyCollection<CellKind>(cells);
+            this.isCool = isCool;
         }
 
         public string ToSendChars()
@@ -27,7 +30,7 @@ namespace Oika.Apps.CHaserGuiServer.Line
             var list = new List<char>();
             list.Add(IsGameSet ? '0' : '1');
 
-            list.AddRange(Cells.Select(c => c.ToSendChar()));
+            list.AddRange(Cells.Select(c => c.ToSendChar(this.isCool)));
 
             return new string(list.ToArray());
         }
